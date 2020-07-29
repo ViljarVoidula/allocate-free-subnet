@@ -5,7 +5,8 @@ use neon::prelude::*;
 use std::str::FromStr;
 use ip_network::{ Ipv4Network, Ipv6Network };
 use cidr::{ AnyIpCidr, Family };
-
+extern crate pretty_env_logger;
+#[macro_use] extern crate log;
 // #[macro_use]
 // extern crate neon;
 // #[macro_use]
@@ -22,6 +23,8 @@ struct Data {
 }
 
 fn handle_ipv4_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> String {
+    pretty_env_logger::init();
+
     let mut i = 0;
     let mut available_subnet = vec![];
     let root_subnet = Ipv4Network::from_str(_subnet).unwrap();
@@ -76,11 +79,12 @@ fn handle_ipv4_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> 
 
 
     let res = available_subnet[0].to_string();
-    println!("Success: {:?}, loops: {}", res, i);
+    debug!("Success: {:?}, loops: {}", res, i);
     return String::from(res);
 }
 
 fn handle_ipv6_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> String {
+    pretty_env_logger::init();
     let mut i = 0;
     let mut available_subnet = vec![];
     let root_subnet = Ipv6Network::from_str(_subnet).unwrap();
@@ -93,9 +97,10 @@ fn handle_ipv6_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> 
     // println!("Prefix: {}", _prefix);
     for val in allocated_list {
         i += 1;
+        // println!("loops: {}", i);
         // let mut cloned_subnets = root_subnet.clone().subnets_with_prefix(_prefix);
         let allocated_network = Ipv6Network::from_str(&val);
-        // let failed_list = cloned_subnets.find(|x| x.contains(allocated_network.as_ref().unwrap().network_address())).into_iter();
+        // let failed_list = cloned_subnets.find(|x| x.contains(allocated_network.as_ref().unwrap().network_address()));
         // for item in failed_list {
         //     i += 1;
         //     let tester = left_vector.iter().any(|v| v == &item);
@@ -110,6 +115,7 @@ fn handle_ipv6_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> 
   
     for item in subnets_list {
         i +=1;
+        // println!("loops to fail: {}", i);
         let cloned_allocated = &allocated_subnets.clone();
         let test1 = item.network_address();
         // let testF = cloned_allocated.iter().any(|v| v == &item.broadcast_address().);
@@ -136,7 +142,7 @@ fn handle_ipv6_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> 
 
     
     let res = available_subnet[0].to_string();
-    println!("Success: {:?}, loops: {}", res, i);
+    // println!("Success: {:?}, loops: {}", res, i);
     return String::from(res);
 }
 
@@ -147,7 +153,7 @@ fn allocate_network_from_subnet(mut cx: FunctionContext) -> JsResult<JsString> {
     // println!("Argument: {:?}", collection_rust);
     let arg0 = cx.argument::<JsValue>(0)?;
     let parsed_input: Data = neon_serde::from_value(&mut cx, arg0)?;
-    println!("{:?}", parsed_input);
+    // println!("{:?}", parsed_input);
 
     // arguments: subnet , prefix , allocated subnets
     // check if subnet is ipV4 or ipv6
