@@ -151,18 +151,17 @@ fn allocate_network_from_subnet(mut cx: FunctionContext) -> JsResult<JsString> {
 
     // arguments: subnet , prefix , allocated subnets
     // check if subnet is ipV4 or ipv6
-    let test_cidr_ipv6 = "2a04:80c0::0/44";
-    let test_cidr_ipv4 = parsed_input._subnet;
+    let cidr = parsed_input._subnet;
     let allocated_networks = parsed_input._subnets;
     let prefix_length = parsed_input._prefix;
-    let network_family = test_cidr_ipv4.parse::<AnyIpCidr>().unwrap().family().unwrap();
+    let network_family = cidr.parse::<AnyIpCidr>().unwrap().family().unwrap();
     let mut result = String::from("");
 
     if let Family::Ipv4 = network_family {
-        result = handle_ipv4_allocation(&test_cidr_ipv4, prefix_length, allocated_networks);
+        result = handle_ipv4_allocation(&cidr, prefix_length, allocated_networks);
     }
     else if let Family::Ipv6 = network_family {
-        result = handle_ipv6_allocation(test_cidr_ipv6, prefix_length, allocated_networks);
+        result = handle_ipv6_allocation(&cidr, prefix_length, allocated_networks);
     }
    
     Ok(cx.string(result))
