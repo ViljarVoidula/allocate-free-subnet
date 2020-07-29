@@ -2,15 +2,14 @@
 
 #[allow(dead_code)]
 use neon::prelude::*;
-use std::net::Ipv4Addr;
 use std::str::FromStr;
 use ip_network::{ Ipv4Network, Ipv6Network };
 use cidr::{ AnyIpCidr, Family };
 
-#[macro_use]
-extern crate neon;
-#[macro_use]
-extern crate neon_serde;
+// #[macro_use]
+// extern crate neon;
+// #[macro_use]
+// extern crate neon_serde;
 #[macro_use]
 extern crate serde_derive;
 
@@ -76,14 +75,69 @@ fn handle_ipv4_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> 
 
 
 
-    println!("Success: {:?}, loops: {}", available_subnet, i);
-    return String::from("testString");
+    let res = available_subnet[0].to_string();
+    println!("Success: {:?}, loops: {}", res, i);
+    return String::from(res);
 }
 
-fn handle_ipv6_allocation(_subnet: &str, _prefix: &u8, _subnets: &mut Vec<String>) -> String {
-    println!("Ipv4 Allocation logic");
+fn handle_ipv6_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> String {
+    let mut i = 0;
+    let mut available_subnet = vec![];
+    let root_subnet = Ipv6Network::from_str(_subnet).unwrap();
+    let allocated_list = _subnets.clone().into_iter();
+    let mut allocated_subnets = vec![];
+    let subnets_list = root_subnet.subnets_with_prefix(_prefix);
+    // let mut left_vector = vec![];
+    // let mut right_vector = vec![];
+    // println!("Subnet: {:?}", root_subnet);
+    // println!("Prefix: {}", _prefix);
+    for val in allocated_list {
+        i += 1;
+        // let mut cloned_subnets = root_subnet.clone().subnets_with_prefix(_prefix);
+        let allocated_network = Ipv6Network::from_str(&val);
+        // let failed_list = cloned_subnets.find(|x| x.contains(allocated_network.as_ref().unwrap().network_address())).into_iter();
+        // for item in failed_list {
+        //     i += 1;
+        //     let tester = left_vector.iter().any(|v| v == &item);
+        //     println!("Allocated list item: {}", val);
+        //     println!("Tester: {}", tester);
+        //     if !tester {
+        //         left_vector.push(item);
+        //     } 
+        // }
+        allocated_subnets.push(allocated_network.unwrap());
+    }
+  
+    for item in subnets_list {
+        i +=1;
+        let cloned_allocated = &allocated_subnets.clone();
+        let test1 = item.network_address();
+        // let testF = cloned_allocated.iter().any(|v| v == &item.broadcast_address().);
+        let test = cloned_allocated.into_iter().find(|x| x.contains(test1));
+        if let None = test  {
+            if available_subnet.len() == 0{ 
+                available_subnet.push(item) 
+            }
+            break;
+        }
+        // for val in test{
+        //     i += 1;
+        //     println!("Allocated list item: {:?}", val);
 
-    return String::from("testString");
+        // }
+        // let valid_subnet = left_vector.iter().any(|v| v == &item);
+        // if !valid_subnet && right_vector.len() <= 15 {
+        //     right_vector.push(item);
+        // }
+    }
+
+
+
+
+    
+    let res = available_subnet[0].to_string();
+    println!("Success: {:?}, loops: {}", res, i);
+    return String::from(res);
 }
 
 
@@ -99,27 +153,17 @@ fn hello(mut cx: FunctionContext) -> JsResult<JsString> {
     // check if subnet is ipV4 or ipv6
     let test_cidr_ipv6 = "2a04:80c0::0/44";
     let test_cidr_ipv4 = parsed_input._subnet;
-    let mut allocated_networks = parsed_input._subnets;
+    let allocated_networks = parsed_input._subnets;
     let network_family = test_cidr_ipv4.parse::<AnyIpCidr>().unwrap().family().unwrap();
     let mut result = String::from("");
 
     if let Family::Ipv4 = network_family {
         result = handle_ipv4_allocation(&test_cidr_ipv4, 29, allocated_networks);
     }
-    // else if let Family::Ipv6 = network_family {
-    //     result = handle_ipv4_allocation(test_cidr_ipv6, 26, allocated_networks);
-    // }
+    else if let Family::Ipv6 = network_family {
+        result = handle_ipv6_allocation(test_cidr_ipv6, 26, allocated_networks);
+    }
    
-    // for val in network_iterator{
-    //     i += 1;
-    //     if i > 3 {
-    //         break;
-    //     }
-    //     println!("Got: {:?} networks iterated: {}", val, i);
-    // }
-    // println!("dafuq: {:?}", network_family);
-    // println!("dafuq: {:?}", network);
-    // println!("dafuq2: {:?}", network2);
     Ok(cx.string(result))
 }
 
