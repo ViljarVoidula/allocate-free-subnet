@@ -141,7 +141,7 @@ fn handle_ipv6_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> 
 }
 
 
-fn hello(mut cx: FunctionContext) -> JsResult<JsString> {
+fn allocate_network_from_subnet(mut cx: FunctionContext) -> JsResult<JsString> {
     // let collection_js = cx.argument::<JsArray>(0)?;
     // let collection_rust: Vec<Handle<JsValue>> = collection_js.to_vec(&mut cx)?;
     // println!("Argument: {:?}", collection_rust);
@@ -168,5 +168,5 @@ fn hello(mut cx: FunctionContext) -> JsResult<JsString> {
 }
 
 register_module!(mut cx, {
-    cx.export_function("hello", hello)
+    cx.export_function("allocateNetworkFromSubnet", allocate_network_from_subnet)
 });
