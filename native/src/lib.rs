@@ -27,7 +27,9 @@ fn handle_ipv4_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> 
 
     let mut i = 0;
     let mut available_subnet = vec![];
+    println!("#parse subnet");
     let root_subnet = Ipv4Network::from_str(_subnet).unwrap();
+    println!("parse subnet: {:?}", root_subnet);
     let allocated_list = _subnets.clone().into_iter();
     let mut allocated_subnets = vec![];
     let subnets_list = root_subnet.subnets_with_prefix(_prefix);
@@ -39,6 +41,7 @@ fn handle_ipv4_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> 
         i += 1;
         // let mut cloned_subnets = root_subnet.clone().subnets_with_prefix(_prefix);
         let allocated_network = Ipv4Network::from_str(&val);
+        println!("Allocated network: {:?}", allocated_network);
         // let failed_list = cloned_subnets.find(|x| x.contains(allocated_network.as_ref().unwrap().network_address())).into_iter();
         // for item in failed_list {
         //     i += 1;
@@ -79,12 +82,12 @@ fn handle_ipv4_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> 
 
 
     let res = available_subnet[0].to_string();
-    debug!("Success: {:?}, loops: {}", res, i);
+    // debug!("Success: {:?}, loops: {}", res, i);
     return String::from(res);
 }
 
 fn handle_ipv6_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> String {
-    pretty_env_logger::init();
+    // pretty_env_logger::init();
     let mut i = 0;
     let mut available_subnet = vec![];
     let root_subnet = Ipv6Network::from_str(_subnet).unwrap();
@@ -153,7 +156,7 @@ fn allocate_network_from_subnet(mut cx: FunctionContext) -> JsResult<JsString> {
     // println!("Argument: {:?}", collection_rust);
     let arg0 = cx.argument::<JsValue>(0)?;
     let parsed_input: Data = neon_serde::from_value(&mut cx, arg0)?;
-    // println!("{:?}", parsed_input);
+    println!("{:?}", parsed_input);
 
     // arguments: subnet , prefix , allocated subnets
     // check if subnet is ipV4 or ipv6
@@ -161,6 +164,7 @@ fn allocate_network_from_subnet(mut cx: FunctionContext) -> JsResult<JsString> {
     let allocated_networks = parsed_input._subnets;
     let prefix_length = parsed_input._prefix;
     let network_family = cidr.parse::<AnyIpCidr>().unwrap().family().unwrap();
+    println!("Network family: {:?}", network_family);
     let mut result = String::from("");
 
     if let Family::Ipv4 = network_family {
