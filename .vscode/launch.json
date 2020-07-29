@@ -1,0 +1,34 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Build native and run index",
+            "preLaunchTask":{
+                "type": "cargo",
+                "subcommand": "build",
+                "problemMatcher": [
+                    "$rustc"
+                ],
+                "group": "build",
+                "label": "Rust: cargo build - native"
+            },
+            "program": "${workspaceFolder}/lib/index.js",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "name": "Debug",
+            "type": "lldb-mi",
+            "request": "launch",
+            "target": "./bin/executable",
+            "cwd": "${workspaceRoot}",
+            "valuesFormatting": "parseText"
+        },
+    ]
+}
