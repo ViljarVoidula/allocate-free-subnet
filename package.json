@@ -1,13 +1,14 @@
 {
   "name": "first-free-subnet",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "description": "This function should return first available subnet after processing already allocated subnets",
   "main": "lib/index.js",
   "author": "Viljar Võidula <viljar@testreel.com>",
   "license": "MIT",
   "dependencies": {
     "neon-cli": "^0.4.0",
-    "node-pre-gyp": "amilajack/node-pre-gyp#neon-compat"
+    "node-pre-gyp": "amilajack/node-pre-gyp",
+    "node-pre-gyp-github": "^1.4.3"
   },
   "repository": {
     "type": "git",
@@ -18,9 +19,12 @@
     "lib"
   ],
   "scripts": {
-    "install": "node-pre-gyp install --fallback-to-build=false || neon build --release",
+    "install": "node-pre-gyp install --fallback-to-build=false --release || neon build --release",
     "package": "node-pre-gyp package",
-    "upload-binary": "node-pre-gyp package && node-pre-gyp-github publish"
+    "upload-binary": "node-pre-gyp package && node-pre-gyp-github publish",
+    "build:windows": "node-pre-gyp package --target_platform=win32 --update-binary --release",
+    "build:linux": "node-pre-gyp package --target_platform=linux --update-binary --release",
+    "publish:release": "yarn build:windows && yarn build:linux && node-pre-gyp-github publish --release"
   },
   "binary": {
     "module_name": "index",
