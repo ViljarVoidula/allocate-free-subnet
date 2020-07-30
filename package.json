@@ -1,6 +1,6 @@
 {
   "name": "first-free-subnet",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "This function should return first available subnet after processing already allocated subnets",
   "main": "lib/index.js",
   "author": "Viljar Võidula <viljar@testreel.com>",
@@ -24,7 +24,7 @@
     "upload-binary": "node-pre-gyp package && node-pre-gyp-github publish",
     "build:windows": "node-pre-gyp package --target_platform=win32 --msvs_version=2018 --target_arch=x64 --update-binary --release",
     "build:linux": "node-pre-gyp package --target_platform=linux --target_arch=x64 --update-binary --release",
-    "publish:release": "yarn build:windows && yarn build:linux && node-pre-gyp-github publish --release --update-binary"
+    "publish:release": "yarn build:windows && yarn build:linux && node-pre-gyp-github publish --release"
   },
   "binary": {
     "module_name": "index",
