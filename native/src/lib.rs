@@ -5,6 +5,8 @@ use neon::prelude::*;
 use std::str::FromStr;
 use ip_network::{ Ipv4Network, Ipv6Network };
 use cidr::{ AnyIpCidr, Family };
+
+
 extern crate pretty_env_logger;
 #[macro_use] extern crate log;
 #[macro_use]
@@ -24,7 +26,7 @@ pub fn handle_ipv4_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>)
     debug!("#parse subnet");
     let root_subnet = Ipv4Network::from_str(_subnet).unwrap();
     debug!("parse subnet: {:?}", root_subnet);
-    let allocated_list = _subnets.clone().into_iter();
+    let allocated_list = _subnets.iter();
     let mut allocated_subnets = vec![];
     let subnets_list = root_subnet.subnets_with_prefix(_prefix);
     debug!("Subnet: {:?}", root_subnet);
@@ -38,7 +40,7 @@ pub fn handle_ipv4_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>)
   
     for item in subnets_list {
         let cloned_allocated = &allocated_subnets.clone();
-        let test = cloned_allocated.into_iter().find(|x| x.contains(item.network_address()));
+        let test = cloned_allocated.iter().find(|x| x.contains(item.network_address()));
         if let None = test  {
             if available_subnet.len() == 0{ 
                 available_subnet.push(item) 
@@ -52,7 +54,7 @@ pub fn handle_ipv4_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>)
 pub fn handle_ipv6_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>) -> String {
     let mut available_subnet = vec![];
     let root_subnet = Ipv6Network::from_str(_subnet).unwrap();
-    let allocated_list = _subnets.clone().into_iter();
+    let allocated_list = _subnets.iter();
     let mut allocated_subnets = vec![];
     let subnets_list = root_subnet.subnets_with_prefix(_prefix);
 
@@ -64,8 +66,11 @@ pub fn handle_ipv6_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>)
     }
   
     for item in subnets_list {
-        let cloned_allocated = &allocated_subnets.clone();
-        let root_contains = cloned_allocated.into_iter().find(|x| x.contains(item.network_address()));
+        let root_contains = allocated_subnets
+        .iter()  // Vec.iter() is the same as &Vec.into_iter()
+        .find(|x| {
+            x.contains(item.network_address())
+        });
         if let None = root_contains  {
             if available_subnet.len() == 0{ 
                 available_subnet.push(item) 
