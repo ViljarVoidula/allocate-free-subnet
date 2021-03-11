@@ -1,13 +1,13 @@
 {
   "name": "first-free-subnet",
-  "version": "0.1.11",
+  "version": "0.1.14",
   "description": "This function should return first available subnet after processing already allocated subnets",
   "main": "lib/index.js",
   "author": "Viljar Võidula <viljar@testreel.com>",
   "license": "MIT",
   "dependencies": {
+    "@mapbox/node-pre-gyp": "^1.0.1",
     "neon-cli": "^0.4.0",
-    "node-pre-gyp": "amilajack/node-pre-gyp",
     "node-pre-gyp-github": "^1.4.3"
   },
   "repository": {
