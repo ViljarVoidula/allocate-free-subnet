@@ -1,6 +1,6 @@
 {
   "name": "first-free-subnet",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "This function should return first available subnet after processing already allocated subnets",
   "main": "lib/index.js",
   "author": "Viljar Võidula <viljar@testreel.com>",
@@ -15,16 +15,15 @@
     "url": "git+https://github.com/ViljarVoidula/allocate-free-subnet.git"
   },
   "files": [
-    "native/index.node",
     "lib"
   ],
   "scripts": {
     "install": "node-pre-gyp install --fallback-to-build=false --release || neon build --release",
     "package": "node-pre-gyp package",
-    "upload-binary": "node-pre-gyp package && node-pre-gyp-github publish",
+    "upload-binary": "node-pre-gyp-github publish",
     "build:windows": "node-pre-gyp package --target_platform=win32 --msvs_version=2018 --target_arch=x64 --release",
     "build:windows-ia32": "node-pre-gyp package --target_platform=win32 --msvs_version=2018 --target_arch=ia32 --release",
-    "build:linux": "node-pre-gyp package --target_platform=linux --target_arch=x64 --release",
+    "build:linux": "node-pre-gyp package --target_platform=linux --target_arch=x64",
     "build:darwin": "node-pre-gyp package --target_platform=darwin --release",
     "publish:release": "yarn build:linux && node-pre-gyp-github publish --release"
   },
