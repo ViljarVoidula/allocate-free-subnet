@@ -17,18 +17,10 @@
                 "group": "build",
                 "label": "Rust: cargo build - native"
             },
-            "program": "${workspaceFolder}/lib/index.js",
+            "program": "${workspaceFolder}/lib/test.js",
             "skipFiles": [
                 "<node_internals>/**"
             ]
-        },
-        {
-            "name": "Debug",
-            "type": "lldb-mi",
-            "request": "launch",
-            "target": "./bin/executable",
-            "cwd": "${workspaceRoot}",
-            "valuesFormatting": "parseText"
-        },
+        }
     ]
 }

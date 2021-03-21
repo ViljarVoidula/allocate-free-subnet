@@ -43,9 +43,10 @@ pub fn handle_ipv4_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>)
         let test = cloned_allocated.iter().find(|x| x.contains(item.network_address()));
         if let None = test  {
             if available_subnet.len() == 0{ 
-                available_subnet.push(item) 
+                available_subnet.push(item);
+                break;
             }
-            break;
+            // break;
         }
     }
     return String::from(available_subnet[0].to_string());
@@ -56,32 +57,42 @@ pub fn handle_ipv6_allocation(_subnet: &str, _prefix: u8, _subnets: Vec<String>)
     let root_subnet = Ipv6Network::from_str(_subnet).unwrap();
     let allocated_list = _subnets.iter();
     let mut allocated_subnets = vec![];
-    let subnets_list = root_subnet.subnets_with_prefix(_prefix);
+    
+
 
     debug!("Subnet: {:?}", root_subnet);
     debug!("Prefix: {}", _prefix);
     for val in allocated_list {
         let allocated_network = Ipv6Network::from_str(&val);
+        let _allocated = Ipv6Network::from_str(&val).unwrap().network_address();
+        let _root = Ipv6Network::from_str(&_subnet).unwrap().network_address();
+        
         allocated_subnets.push(allocated_network.unwrap());
     }
   
+
+    let subnets_list = root_subnet
+        .subnets_with_prefix(_prefix)
+        .skip_while(|x|
+            // allocated_subnets.into_iter().filter(|y| y.is_global());
+            // y.contains(x.network_address()
+            x.contains(root_subnet.network_address())
+        );
+
     for item in subnets_list {
-        let root_contains = allocated_subnets
-        .iter()  // Vec.iter() is the same as &Vec.into_iter()
+        // println!("items: {}", item);
+        let root_contains = &allocated_subnets
+        .iter()  // Vec.iter() is the same as &Vec.into_iter() into iter consumes
         .find(|x| {
             x.contains(item.network_address())
         });
         if let None = root_contains  {
             if available_subnet.len() == 0{ 
-                available_subnet.push(item) 
+                available_subnet.push(item);
+                break;
             }
-            break;
         }
     }
-
-
-
-
     
     let res = available_subnet[0].to_string();
     // debug!("Success: {:?}, loops: {}", res, i);
